@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskEntity } from './entities/task.entity';
 
-
 @Injectable()
 export class TasksService {
   constructor(
@@ -12,38 +11,66 @@ export class TasksService {
   ) {}
 
   async createTask(task: CreateTaskDto) {
-    return await this.taskModel.create({
-      name: task.name,
-      description: task.description,
-      dateOfCreation: task.dateOfCreation,
-      deadline: task.deadline,
-      color: task.color,
-      status: task.status,
-    });
+    
+    try {
+      return await this.taskModel.create({
+        name: task.name,
+        description: task.description,
+        dateOfCreation: task.dateOfCreation,
+        deadline: task.deadline,
+        color: task.color,
+        status: task.status,
+      });
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
   }
 
   async getAll() {
-    return await this.taskModel.find();
+    try {
+      return await this.taskModel.find();
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      throw error;
+    }
   }
 
   async getOne(id: string) {
-    return await this.taskModel.findById({ _id: id });
+    try {
+      const task = await this.taskModel.findById({ _id: id });
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+      return task;
+    } catch (error) {
+      console.error('Error getting task by ID:', error);
+      throw error;
+    }
   }
 
   async deleteOne(id: string) {
-    return await this.taskModel.findByIdAndDelete({ _id: id });
+    try {
+      const task = await this.taskModel.findByIdAndDelete({ _id: id });
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+      return task;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
   }
-  // async deleteSome(ids: string[]):Promise<DeleteResult> {
-  //   return await this.taskModel.deleteMany({ _id: { $in: ids } });
-  // }
 
   async updateStatus(id: string, status: string) {
-    const task = await this.getOne(id); // Используйте await здесь
-    if (!task) throw new NotFoundException("This task hasn't been found");
-
-    task.status = status;
-    return await task.save();
+    try {
+      const task = await this.getOne(id);
+      // Validate if the provided status is valid (add your validation logic here)
+      task.status = status;
+      return await task.save();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      throw error;
+    }
   }
-
-
 }
