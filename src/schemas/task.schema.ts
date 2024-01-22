@@ -3,9 +3,8 @@ import * as mongoose from 'mongoose';
 export const TaskSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true, 
+    required: true,
   },
-  id: mongoose.Schema.Types.ObjectId,
   description: String,
   dateOfCreation: {
     type: Date,
@@ -13,5 +12,11 @@ export const TaskSchema = new mongoose.Schema({
   },
   deadline: String,
   color: String,
-  status: String
+  status: String,
+
+  // Добавляем поле user с типом mongoose.Schema.Types.ObjectId, связанное с схемой UserSchema
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserSchema',
+  },
 });

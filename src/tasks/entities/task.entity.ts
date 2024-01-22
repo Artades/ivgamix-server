@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { UserEntity } from '../../users/entities/user.entity'; // Импортируем схему пользователя
 
 @Schema({ timestamps: true })
 export class TaskEntity extends Document {
@@ -23,6 +24,10 @@ export class TaskEntity extends Document {
 
   @Prop()
   status: string;
+
+  // Добавляем поле user с типом mongoose.Schema.Types.ObjectId, связанное с схемой UserEntity
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserEntity' })
+  user: mongoose.Types.ObjectId;
 }
 
 export const TaskEntitySchema = SchemaFactory.createForClass(TaskEntity);
